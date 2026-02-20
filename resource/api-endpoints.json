@@ -1,0 +1,378 @@
+{
+  "baseUrl": "http://localhost:8080",
+  "endpoints": [
+    {
+      "name": "Get All Transactions",
+      "endpoint": "/transactions",
+      "method": "GET",
+      "description": "Retrieves all transactions sorted by date (newest first)",
+      "payload": null,
+      "response": {
+        "success": true,
+        "data": [
+          {
+            "id": "507f1f77bcf86cd799439011",
+            "title": "Monthly Salary",
+            "amount": 15000000,
+            "type": "income",
+            "category": "Salary",
+            "date": "2024-06-15T10:30:00.000Z",
+            "note": "June 2024 salary"
+          },
+          {
+            "id": "507f191e810c19729de860ea",
+            "title": "Grocery Shopping",
+            "amount": 450000,
+            "type": "expense",
+            "category": "Food",
+            "date": "2024-06-14T08:00:00.000Z"
+          }
+        ],
+        "meta": {
+          "total": 2,
+          "count": 2,
+          "timestamp": "2024-06-20T14:30:00.000Z"
+        },
+        "message": "Transactions retrieved successfully"
+      }
+    },
+    {
+      "name": "Get Transaction by ID",
+      "endpoint": "/transactions/:id",
+      "method": "GET",
+      "description": "Retrieves a single transaction by its ID (MongoDB ObjectId or UUID)",
+      "urlParams": {
+        "id": "507f1f77bcf86cd799439011 or 2ef41115-a6f8-47f1-8977-8e6ba2dd573a"
+      },
+      "payload": null,
+      "response": {
+        "success": true,
+        "data": {
+          "id": "507f1f77bcf86cd799439011",
+          "title": "Monthly Salary",
+          "amount": 15000000,
+          "type": "income",
+          "category": "Salary",
+          "date": "2024-06-15T10:30:00.000Z",
+          "note": "June 2024 salary"
+        },
+        "message": "Transaction retrieved successfully",
+        "timestamp": "2024-06-20T14:30:00.000Z"
+      },
+      "errorResponses": [
+        {
+          "status": 400,
+          "response": {
+            "success": false,
+            "error": "Invalid id format",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        },
+        {
+          "status": 404,
+          "response": {
+            "success": false,
+            "error": "Transaction not found",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Transaction",
+      "endpoint": "/transactions",
+      "method": "POST",
+      "description": "Creates a new transaction",
+      "payload": {
+        "title": "Freelance Project",
+        "amount": 5000000,
+        "type": "income",
+        "category": "Freelance",
+        "date": "2024-06-20T10:00:00Z",
+        "note": "Website development project"
+      },
+      "payloadSchema": {
+        "title": {
+          "type": "string",
+          "required": true,
+          "validation": "Non-empty string"
+        },
+        "amount": {
+          "type": "number",
+          "required": true,
+          "validation": "Positive number (> 0)"
+        },
+        "type": {
+          "type": "string",
+          "required": true,
+          "validation": "Must be 'income' or 'expense'"
+        },
+        "category": {
+          "type": "string",
+          "required": true,
+          "validation": "Non-empty string"
+        },
+        "date": {
+          "type": "string",
+          "required": true,
+          "validation": "ISO 8601 date format"
+        },
+        "note": {
+          "type": "string",
+          "required": false,
+          "validation": "Optional string"
+        }
+      },
+      "response": {
+        "success": true,
+        "data": {
+          "id": "507f1f77bcf86cd799439011",
+          "title": "Freelance Project",
+          "amount": 5000000,
+          "type": "income",
+          "category": "Freelance",
+          "date": "2024-06-20T10:00:00.000Z",
+          "note": "Website development project"
+        },
+        "message": "Transaction created successfully",
+        "timestamp": "2024-06-20T14:30:00.000Z"
+      },
+      "errorResponses": [
+        {
+          "status": 400,
+          "response": {
+            "success": false,
+            "error": "Validation failed",
+            "details": [
+              {
+                "field": "amount",
+                "message": "amount must be a positive number"
+              },
+              {
+                "field": "type",
+                "message": "type must be 'income' or 'expense'"
+              }
+            ],
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Transaction",
+      "endpoint": "/transactions/:id",
+      "method": "PATCH",
+      "description": "Updates an existing transaction. Only provided fields will be updated",
+      "urlParams": {
+        "id": "507f1f77bcf86cd799439011 or 2ef41115-a6f8-47f1-8977-8e6ba2dd573a"
+      },
+      "payload": {
+        "title": "Updated Freelance Project",
+        "amount": 5500000,
+        "note": "Updated payment amount"
+      },
+      "payloadSchema": {
+        "title": {
+          "type": "string",
+          "required": false,
+          "validation": "Non-empty string if provided"
+        },
+        "amount": {
+          "type": "number",
+          "required": false,
+          "validation": "Positive number if provided"
+        },
+        "type": {
+          "type": "string",
+          "required": false,
+          "validation": "'income' or 'expense' if provided"
+        },
+        "category": {
+          "type": "string",
+          "required": false,
+          "validation": "Non-empty string if provided"
+        },
+        "date": {
+          "type": "string",
+          "required": false,
+          "validation": "ISO 8601 format if provided"
+        },
+        "note": {
+          "type": "string",
+          "required": false,
+          "validation": "String if provided"
+        }
+      },
+      "response": {
+        "success": true,
+        "data": {
+          "id": "507f1f77bcf86cd799439011",
+          "title": "Updated Freelance Project",
+          "amount": 5500000,
+          "type": "income",
+          "category": "Freelance",
+          "date": "2024-06-20T10:00:00.000Z",
+          "note": "Updated payment amount"
+        },
+        "message": "Transaction updated successfully",
+        "timestamp": "2024-06-20T14:30:00.000Z"
+      },
+      "errorResponses": [
+        {
+          "status": 400,
+          "description": "No fields to update",
+          "response": {
+            "success": false,
+            "error": "No fields to update",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        },
+        {
+          "status": 400,
+          "description": "Invalid ID format",
+          "response": {
+            "success": false,
+            "error": "Invalid id format",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        },
+        {
+          "status": 404,
+          "response": {
+            "success": false,
+            "error": "Transaction not found",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Transaction",
+      "endpoint": "/transactions/:id",
+      "method": "DELETE",
+      "description": "Deletes a transaction by ID",
+      "urlParams": {
+        "id": "507f1f77bcf86cd799439011 or 2ef41115-a6f8-47f1-8977-8e6ba2dd573a"
+      },
+      "payload": null,
+      "response": {
+        "success": true,
+        "data": null,
+        "message": "Transaction deleted successfully",
+        "timestamp": "2024-06-20T14:30:00.000Z"
+      },
+      "errorResponses": [
+        {
+          "status": 400,
+          "response": {
+            "success": false,
+            "error": "Invalid id format",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        },
+        {
+          "status": 404,
+          "response": {
+            "success": false,
+            "error": "Transaction not found",
+            "timestamp": "2024-06-20T14:30:00.000Z"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Financial Summary",
+      "endpoint": "/summary",
+      "method": "GET",
+      "description": "Retrieves financial summary with totals and transaction counts",
+      "payload": null,
+      "response": {
+        "success": true,
+        "data": {
+          "total_income": 20000000,
+          "total_expenses": 5500000,
+          "net_balance": 14500000,
+          "transaction_count": {
+            "income": 5,
+            "expense": 12,
+            "total": 17
+          }
+        },
+        "meta": {
+          "timestamp": "2024-06-20T14:30:00.000Z",
+          "currency": "NGN"
+        },
+        "message": "Financial summary retrieved successfully"
+      }
+    }
+  ],
+  "commonErrors": [
+    {
+      "code": 200,
+      "description": "Success - GET, PATCH requests"
+    },
+    {
+      "code": 201,
+      "description": "Created - POST requests"
+    },
+    {
+      "code": 400,
+      "description": "Bad Request - Validation errors, invalid ID format"
+    },
+    {
+      "code": 404,
+      "description": "Not Found - Transaction or route not found"
+    },
+    {
+      "code": 409,
+      "description": "Conflict - Duplicate entry"
+    },
+    {
+      "code": 500,
+      "description": "Internal Server Error - Unexpected server errors"
+    }
+  ],
+  "idFormats": {
+    "mongodb": {
+      "format": "24-character hex string",
+      "example": "507f1f77bcf86cd799439011"
+    },
+    "uuid": {
+      "format": "36-character UUID with dashes",
+      "example": "2ef41115-a6f8-47f1-8977-8e6ba2dd573a"
+    }
+  },
+  "dateFormat": {
+    "standard": "ISO 8601",
+    "validExamples": [
+      "2024-06-20T14:30:00Z",
+      "2024-06-20T14:30:00.000Z",
+      "2024-06-20T14:30:00+07:00"
+    ],
+    "invalidExamples": [
+      "2024-06-20",
+      "20/06/2024",
+      "June 20, 2024"
+    ]
+  },
+  "suggestedCategories": {
+    "income": [
+      "Salary",
+      "Freelance",
+      "Investment",
+      "Business",
+      "Gift",
+      "Other Income"
+    ],
+    "expense": [
+      "Food",
+      "Transport",
+      "Shopping",
+      "Bills",
+      "Entertainment",
+      "Healthcare",
+      "Education",
+      "Other Expense"
+    ]
+  }
+}
